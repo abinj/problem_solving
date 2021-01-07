@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class SortListByOccurances {
 
@@ -17,61 +16,45 @@ public class SortListByOccurances {
             for(int i =0; i< n;i++) {
                 arr[i] = Integer.parseInt(nums[i]);
             }
-            int[] sortedNums = get_sort(n, arr);
-            System.out.println("Test");
+            int[] sortedNums = sorter(n, arr);
+            System.out.println("Test output: " + sortedNums);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private static int[] get_sort(int n, int[] arr) {
-        Arrays.sort(arr);
-        reverse(arr);
+    private static int[] sorter(int n, int[] arr) {
         HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
-        for(int i =0; i< n; i++) {
-            int count =1;
-            int lastPoint = 0;
-            for (int j=i+1; j< n; j++) {
-                lastPoint = j - 1;
-                if (arr[i] == arr[j]) {
-                    count++;
-                } else {
-                    break;
+        for(int i =0; i< arr.length; i++) {
+            if (map.containsKey(arr[i])) {
+                map.put(arr[i], (map.get(arr[i]) + 1));
+            } else {
+                map.put(arr[i], 1);
+            }
+        }
+
+        // Create a list from elements of HashMap
+        List<Map.Entry<Integer, Integer> > list =
+                new LinkedList<Map.Entry<Integer, Integer> >(map.entrySet());
+
+        // Sort the list
+        Collections.sort(list, new Comparator<Map.Entry<Integer, Integer> >() {
+            public int compare(Map.Entry<Integer, Integer> o1,
+                               Map.Entry<Integer, Integer> o2)
+            {
+                if(o2.getValue() == o1.getValue()) {
+                    return ((o2.getKey()).compareTo(o1.getKey()));
                 }
+                return (o2.getValue()).compareTo(o1.getValue());
             }
-            map.put(arr[i], count);
-            if (i>= n-1) {
-                break;
-            }
-            i = lastPoint;
+        });
+        int[] result = new int[map.size()];
+        int i =0;
+        for(Map.Entry<Integer, Integer> entry : list) {
+            result[i] = entry.getKey();
+            i++;
         }
-        HashMap<Integer, Integer> sortedMap = sortByValue(map, false);
-        List<Integer> sortedNumbers = new ArrayList<Integer>(sortedMap.keySet());
-
-        System.out.println("Test output: " + sortedNumbers);
-        return new int[0];
-    }
-
-    private static HashMap<Integer, Integer> sortByValue(HashMap<Integer, Integer> unsortMap, final boolean order)
-    {
-        List<Map.Entry<Integer, Integer>> list = new LinkedList<>(unsortMap.entrySet());
-
-        // Sorting the list based on values
-        list.sort((o1, o2) -> order ? o1.getValue().compareTo(o2.getValue()) == 0
-                ? o1.getKey().compareTo(o2.getKey())
-                : o1.getValue().compareTo(o2.getValue()) : o2.getValue().compareTo(o1.getValue()) == 0
-                ? o2.getKey().compareTo(o1.getKey())
-                : o2.getValue().compareTo(o1.getValue()));
-        return list.stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (a, b) -> b, LinkedHashMap::new));
-    }
-
-    private static void reverse(int[] input) {
-        int last = input.length - 1;
-        int middle = input.length/2;
-        for(int i =0; i < middle; i++) {
-            int temp = input[i];
-            input[i] = input[last - i];
-            input[last -i] = temp;
-        }
+        System.out.println("Test output: " + result);
+        return result;
     }
 }
