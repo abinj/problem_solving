@@ -45,9 +45,7 @@ public class CoinChange_1 {
 
         for(int coin : c) {
             for (int i = coin; i < combinations.length; i++) {
-                if (i >= coin) {
-                    combinations[i] += combinations[i - coin];
-                }
+                combinations[i] += combinations[i - coin];
             }
         }
         return combinations[n];
