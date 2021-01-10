@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 import static java.util.stream.Collectors.toList;
 
 //Can you determine the number of ways of making change for a particular number of units using the given types of coins
-public class CoinChange_1 {
+public class CoinChange_max {
 
     public static int getWays(int n, List<Integer> c) {
         return getWays(n, c, 0, new HashMap<String, Integer>());
